@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Movie Night</title>
+  <style>
+    body { font-family: sans-serif; background: #0A0D14; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+    h2 { font-size: 22px; margin-bottom: 8px; }
+    p { opacity: 0.5; font-size: 14px; margin: 0; }
+  </style>
+  <script>
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (id) window.location.replace('moviesagentapp://movies/' + id);
+  </script>
+</head>
+<body>
+  <div>
+    <h2>Movie Night</h2>
+    <p>Opening the app...</p>
+  </div>
+</body>
+</html>
