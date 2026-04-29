@@ -3,21 +3,55 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Movie Night</title>
+  <title>I Like Movies</title>
   <style>
-    body { font-family: sans-serif; background: #0A0D14; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-    h2 { font-size: 22px; margin-bottom: 8px; }
-    p { opacity: 0.5; font-size: 14px; margin: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0A0D14; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; text-align: center; padding: 24px; box-sizing: border-box; }
+    .card { max-width: 360px; }
+    h2 { font-size: 22px; margin: 0 0 8px; font-weight: 700; }
+    p { opacity: 0.6; font-size: 14px; margin: 0 0 18px; line-height: 20px; }
+    a.btn { display: inline-block; background: #3B82F6; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; }
+    a.btn:active { opacity: 0.85; }
   </style>
   <script>
-    const id = new URLSearchParams(window.location.search).get('id');
-    if (id) window.location.replace('moviesagentapp://movies/' + id);
+    // Single-page deep-link redirector. Each share flow uses one
+    // distinguishing query param so the BE can build https URLs that
+    // messengers auto-linkify, and tapping them lands us here, where we
+    // bounce to the app's custom moviesagentapp:// scheme.
+    const params = new URLSearchParams(window.location.search);
+    let target = null;
+    if (params.has('id')) {
+      // Legacy movie share — preserve the original ?id= contract.
+      target = 'moviesagentapp://movies/' + encodeURIComponent(params.get('id'));
+    } else if (params.has('friend')) {
+      target = 'moviesagentapp://friend/accept?code=' + encodeURIComponent(params.get('friend'));
+    } else if (params.has('household')) {
+      target = 'moviesagentapp://household/join?code=' + encodeURIComponent(params.get('household'));
+    } else if (params.has('householdInvite')) {
+      target = 'moviesagentapp://household/invite?id=' + encodeURIComponent(params.get('householdInvite'));
+    }
+    if (target) {
+      // Expose the target for the manual-fallback link below — older
+      // browsers / in-app webviews sometimes block scheme redirects from
+      // window.location, so a tappable anchor gives the user a way out.
+      window.__deepLink = target;
+      window.location.replace(target);
+    }
   </script>
 </head>
 <body>
-  <div>
-    <h2>Movie Night</h2>
-    <p>Opening the app...</p>
+  <div class="card">
+    <h2>I Like Movies</h2>
+    <p>Opening the app…</p>
+    <a class="btn" href="#" id="manualOpen">Tap to open the app</a>
+    <noscript><p style="margin-top:18px;">Enable JavaScript to open the app.</p></noscript>
   </div>
+  <script>
+    const btn = document.getElementById('manualOpen');
+    if (window.__deepLink) {
+      btn.href = window.__deepLink;
+    } else {
+      btn.style.display = 'none';
+    }
+  </script>
 </body>
 </html>
