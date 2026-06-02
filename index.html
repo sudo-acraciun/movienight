@@ -20,8 +20,16 @@
     const params = new URLSearchParams(window.location.search);
     let target = null;
     if (params.has('id')) {
-      // Legacy movie share — preserve the original ?id= contract.
+      // Movie / TV share. mediaType disambiguates same-id collisions across
+      // media types — TMDB ids are namespaced by type (e.g. TV 1396 and a
+      // different movie 1396 both exist). The app's detail route defaults to
+      // 'movie' when the param is absent, so legacy ?id=-only links keep
+      // working unchanged; we only append mediaType when it's supplied.
       target = 'moviesagentapp://movies/' + encodeURIComponent(params.get('id'));
+      const mediaType = params.get('mediaType');
+      if (mediaType) {
+        target += '?mediaType=' + encodeURIComponent(mediaType);
+      }
     } else if (params.has('friend')) {
       target = 'moviesagentapp://friend/accept?code=' + encodeURIComponent(params.get('friend'));
     } else if (params.has('household')) {
